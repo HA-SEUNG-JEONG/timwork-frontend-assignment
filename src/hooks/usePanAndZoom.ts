@@ -23,7 +23,9 @@ export function usePanAndZoom() {
 	const transformRef = useRef(transform);
 	const panStartRef = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
 
-	transformRef.current = transform;
+	useEffect(() => {
+		transformRef.current = transform;
+	}, [transform]);
 
 	useEffect(() => {
 		const container = containerRef.current;

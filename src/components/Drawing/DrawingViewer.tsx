@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { DrawingFilters } from "./DrawingFilters";
+import { DrawingContextHeader } from "./DrawingContextHeader";
 
 import { useAppContext } from "../../context/AppContext";
 import type { Discipline, DrawingDiscipline, Revision } from "../../type";
@@ -43,14 +44,21 @@ export const DrawingViewer = () => {
 		if (!selectedDiscipline) return;
 
 		const isDisciplineAvailable = availableDisciplines.some(
-			(d) => d.name === selectedDiscipline.name
+			(availableDiscipline) =>
+				availableDiscipline.name === selectedDiscipline.name,
 		);
 
 		if (!isDisciplineAvailable) {
 			setSelectedDiscipline(null);
 			setSelectedRevision(null);
 		}
-	}, [selectedDrawing, availableDisciplines, selectedDiscipline, setSelectedDiscipline, setSelectedRevision]);
+	}, [
+		selectedDrawing,
+		availableDisciplines,
+		selectedDiscipline,
+		setSelectedDiscipline,
+		setSelectedRevision,
+	]);
 
 	const availableRevisions = useMemo(() => {
 		if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
@@ -92,7 +100,12 @@ export const DrawingViewer = () => {
 	}, [selectedDrawing, selectedDiscipline, selectedRevision, metadata]);
 
 	return (
-		<main className="flex-1 p-4 bg-gray-100 h-screen overflow-auto">
+		<main className="flex-1 flex flex-col p-4 bg-gray-100 h-screen">
+			<DrawingContextHeader
+				drawingName={selectedDrawing?.name || "도면을 선택하세요"}
+				disciplineName={selectedDiscipline?.name}
+				revisionVersion={selectedRevision?.version}
+			/>
 			<DrawingFilters
 				selectedDrawing={selectedDrawing}
 				selectedDiscipline={selectedDiscipline}
@@ -102,7 +115,9 @@ export const DrawingViewer = () => {
 				onDisciplineChange={handleDisciplineChange}
 				onRevisionChange={handleRevisionChange}
 			/>
-			<ImageCanvas imageUrl={imageUrl} selectedDrawing={selectedDrawing} />
+			<div className="flex-1 overflow-auto">
+				<ImageCanvas imageUrl={imageUrl} selectedDrawing={selectedDrawing} />
+			</div>
 		</main>
 	);
 };
