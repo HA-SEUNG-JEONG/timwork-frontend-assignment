@@ -1,105 +1,108 @@
+import { useMemo, useEffect } from "react";
 import { DrawingFilters } from "./DrawingFilters";
 
 import { useAppContext } from "../../context/AppContext";
-import type { Discipline, NormalizedDrawing, Revision } from "../../type";
+import type { Discipline, DrawingDiscipline, Revision } from "../../type";
+import { ImageCanvas } from "./ImageCanvas";
 
 export const DrawingViewer = () => {
-    const {
-        metadata,
-        selectedDrawing,
-        selectedDiscipline,
-        setSelectedDiscipline,
-        selectedRevision,
-        setSelectedRevision,
-    } = useAppContext();
+	const {
+		metadata,
+		selectedDrawing,
+		selectedDiscipline,
+		setSelectedDiscipline,
+		selectedRevision,
+		setSelectedRevision,
+	} = useAppContext();
 
-    const handleDisciplineChange = (discipline: Discipline | null) => {
-        setSelectedDiscipline(discipline);
-        setSelectedRevision(null);
-    };
+	const handleDisciplineChange = (discipline: Discipline | null) => {
+		setSelectedDiscipline(discipline);
+		setSelectedRevision(null);
+	};
 
-    const handleRevisionChange = (revision: Revision | null) => {
-        setSelectedRevision(revision);
-    };
+	const handleRevisionChange = (revision: Revision | null) => {
+		setSelectedRevision(revision);
+	};
 
-    const getAvailableDisciplines = (drawing: NormalizedDrawing | null) => {
-        if (!drawing || !metadata) return [];
-        const drawingData = metadata.drawings[drawing.id];
-        return Object.keys(drawingData.disciplines).map(
-            (name) => metadata.disciplines.find((d) => d.name === name)!
-        );
-    };
+	const disciplineMap = useMemo(() => {
+		if (!metadata) return new Map<string, Discipline>();
+		return new Map(metadata.disciplines.map((d) => [d.name, d]));
+	}, [metadata]);
 
-    const getAvailableRevisions = (
-        drawing: NormalizedDrawing | null,
-        discipline: Discipline | null
-    ) => {
-        if (!drawing || !discipline || !metadata) return [];
-        const drawingDiscipline =
-            metadata.drawings[drawing.id]?.disciplines[discipline.name];
-        return drawingDiscipline?.revisions || [];
-    };
+	const availableDisciplines = useMemo(() => {
+		if (!selectedDrawing || !metadata) return [];
+		const drawingData = metadata.drawings[selectedDrawing.id];
+		if (!drawingData?.disciplines) return [];
+		return Object.keys(drawingData.disciplines)
+			.map((name) => disciplineMap.get(name))
+			.filter((d): d is Discipline => d !== undefined);
+	}, [selectedDrawing, metadata, disciplineMap]);
 
-    const availableDisciplines = getAvailableDisciplines(selectedDrawing);
-    const availableRevisions = getAvailableRevisions(
-        selectedDrawing,
-        selectedDiscipline
-    );
+	// 도면이 변경되었을 때 선택된 공종이 새 도면에 없으면 초기화
+	useEffect(() => {
+		if (!selectedDiscipline) return;
 
-    const displayRevision = selectedRevision ?? availableRevisions[0] ?? null;
-    const rawImage = displayRevision?.image ?? null;
-    const imageUrl =
-        rawImage &&
-        (rawImage.startsWith("http") || rawImage.startsWith("/")
-            ? rawImage
-            : `/data/drawings/${rawImage}`);
-    return (
-        <main className="flex-1 flex flex-col p-4 bg-gray-100 h-screen overflow-auto">
-            <DrawingFilters
-                selectedDrawing={selectedDrawing}
-                selectedDiscipline={selectedDiscipline}
-                selectedRevision={selectedRevision}
-                availableDisciplines={availableDisciplines}
-                availableRevisions={availableRevisions}
-                onDisciplineChange={handleDisciplineChange}
-                onRevisionChange={handleRevisionChange}
-            />
-            <section className="flex-1 min-h-0 mt-4 bg-white rounded-lg border border-gray-200 overflow-auto">
-                {!selectedDrawing && (
-                    <p className="p-4 text-gray-500">도면을 선택하세요.</p>
-                )}
-                {selectedDrawing && !selectedDiscipline && (
-                    <p className="p-4 text-gray-500">공종을 선택하세요.</p>
-                )}
-                {selectedDrawing &&
-                    selectedDiscipline &&
-                    availableRevisions.length === 0 && (
-                        <p className="p-4 text-gray-500">
-                            이 공종에 사용 가능한 리비전이 없습니다.
-                        </p>
-                    )}
-                {selectedDrawing &&
-                    selectedDiscipline &&
-                    availableRevisions.length > 0 &&
-                    !imageUrl && (
-                        <p className="p-4 text-gray-500">
-                            도면 이미지를 불러올 수 없습니다.
-                        </p>
-                    )}
-                {imageUrl && (
-                    <img
-                        src={imageUrl}
-                        alt={
-                            selectedDrawing
-                                ? `${selectedDrawing.name} - ${
-                                      selectedDiscipline?.name ?? ""
-                                  } - ${displayRevision?.version ?? ""}`
-                                : "도면"
-                        }
-                        className="max-w-full h-auto object-contain"
-                    />
-                )}
-            </section>
-        </main>
-    );
+		const isDisciplineAvailable = availableDisciplines.some(
+			(d) => d.name === selectedDiscipline.name
+		);
+
+		if (!isDisciplineAvailable) {
+			setSelectedDiscipline(null);
+			setSelectedRevision(null);
+		}
+	}, [selectedDrawing, availableDisciplines, selectedDiscipline, setSelectedDiscipline, setSelectedRevision]);
+
+	const availableRevisions = useMemo(() => {
+		if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
+		const drawingDiscipline =
+			metadata.drawings[selectedDrawing.id]?.disciplines?.[
+				selectedDiscipline.name
+			];
+		if (!drawingDiscipline) return [];
+
+		const revisions: Revision[] = [...(drawingDiscipline.revisions || [])];
+
+		if (drawingDiscipline.regions) {
+			for (const region of Object.values(drawingDiscipline.regions)) {
+				revisions.push(...region.revisions);
+			}
+		}
+
+		return revisions;
+	}, [selectedDrawing, selectedDiscipline, metadata]);
+
+	const imageUrl = useMemo(() => {
+		if (!selectedDrawing) return null;
+
+		let image = selectedDrawing.image;
+		if (selectedDiscipline) {
+			const disciplineData: DrawingDiscipline | undefined =
+				metadata?.drawings[selectedDrawing.id]?.disciplines?.[
+					selectedDiscipline.name
+				];
+			if (disciplineData?.image) {
+				image = disciplineData.image;
+			}
+		}
+		if (selectedRevision?.image) {
+			image = selectedRevision.image;
+		}
+
+		return image ? `/data/drawings/${image}` : null;
+	}, [selectedDrawing, selectedDiscipline, selectedRevision, metadata]);
+
+	return (
+		<main className="flex-1 p-4 bg-gray-100 h-screen overflow-auto">
+			<DrawingFilters
+				selectedDrawing={selectedDrawing}
+				selectedDiscipline={selectedDiscipline}
+				selectedRevision={selectedRevision}
+				availableDisciplines={availableDisciplines}
+				availableRevisions={availableRevisions}
+				onDisciplineChange={handleDisciplineChange}
+				onRevisionChange={handleRevisionChange}
+			/>
+			<ImageCanvas imageUrl={imageUrl} selectedDrawing={selectedDrawing} />
+		</main>
+	);
 };
