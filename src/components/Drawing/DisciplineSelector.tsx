@@ -40,7 +40,7 @@ export const DisciplineSelector = React.memo(
 									type="checkbox"
 									checked={isSelected}
 									onChange={(e) => handleCheckboxChange(discipline, e)}
-									className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer"
+									className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 cursor-pointer"
 								/>
 								<div
 									className={`px-2 py-0.5 rounded text-xs font-medium ${colors.bg} ${colors.text}`}

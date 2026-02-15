@@ -12,7 +12,7 @@ function AppContent() {
 			) : (
 				<button
 					onClick={toggleSidebar}
-					className="fixed left-4 top-4 z-50 p-3 bg-white text-gray-700 hover:bg-gray-100 rounded-lg shadow-lg border border-gray-200 transition-all"
+					className="fixed left-4 top-4 z-50 p-3 bg-white text-gray-700 hover:bg-gray-100 rounded-lg transition-all"
 					title="사이드바 표시"
 					aria-label="사이드바 표시"
 				>
