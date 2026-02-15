@@ -92,3 +92,12 @@ export interface NormalizedDrawing {
 	};
 	children: NormalizedDrawing[];
 }
+
+export interface OverlayLayer {
+	id: string; // 고유 식별자
+	discipline: Discipline; // 공종 정보
+	revision: Revision | null; // 선택된 리비전 (MVP에서는 자동으로 최신 리비전)
+	opacity: number; // 0.0 ~ 1.0 (기본값: 0.7)
+	visible: boolean; // 표시/숨김 (기본값: true)
+	zIndex: number; // 레이어 순서
+}

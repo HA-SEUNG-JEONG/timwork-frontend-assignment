@@ -13,7 +13,7 @@ export const ZoomControls = React.memo(
 
 		return (
 			<div
-				className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 px-2 py-1 select-none"
+				className="absolute top-4 right-4 flex items-center gap-1 z-50 bg-white/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 px-2 py-1 select-none"
 				onMouseDown={stop}
 			>
 				<button
