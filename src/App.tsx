@@ -1,14 +1,22 @@
 import { TreeView } from "./components/Navigation/TreeView";
 import { DrawingViewer } from "./components/Drawing/DrawingViewer";
-import { AppProvider } from "./context/AppContext";
+import { AppProvider, useAppContext } from "./context/AppContext";
+
+function AppContent() {
+	const { isSidebarVisible } = useAppContext();
+
+	return (
+		<div className="flex h-screen">
+			{isSidebarVisible && <TreeView />}
+			<DrawingViewer />
+		</div>
+	);
+}
 
 function App() {
 	return (
 		<AppProvider>
-			<div className="flex h-screen">
-				<TreeView />
-				<DrawingViewer />
-			</div>
+			<AppContent />
 		</AppProvider>
 	);
 }

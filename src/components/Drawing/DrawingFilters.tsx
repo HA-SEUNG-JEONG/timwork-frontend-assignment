@@ -1,10 +1,10 @@
 import React from "react";
-import type { Discipline, NormalizedDrawing, Revision } from "../../type";
+import type { Discipline, Revision } from "../../type";
+import { isLatestRevision } from "../../utils/revisionUtils";
+import { findDisciplineByName } from "../../utils/disciplineUtils";
+import { useAppContext } from "../../context/AppContext";
 
 interface DrawingFiltersProps {
-	selectedDrawing: NormalizedDrawing | null;
-	selectedDiscipline: Discipline | null;
-	selectedRevision: Revision | null;
 	availableDisciplines: Discipline[];
 	availableRevisions: Revision[];
 	onDisciplineChange: (discipline: Discipline | null) => void;
@@ -12,18 +12,18 @@ interface DrawingFiltersProps {
 }
 
 export const DrawingFilters = ({
-	selectedDrawing,
-	selectedDiscipline,
-	selectedRevision,
 	availableDisciplines,
 	availableRevisions,
 	onDisciplineChange,
 	onRevisionChange,
 }: DrawingFiltersProps) => {
+	const { selectedDrawing, selectedDiscipline, selectedRevision } =
+		useAppContext();
+
 	const handleDisciplineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const disciplineName = e.target.value;
 		const discipline =
-			availableDisciplines.find((d) => d.name === disciplineName) || null;
+			findDisciplineByName(availableDisciplines, disciplineName) || null;
 		onDisciplineChange(discipline);
 	};
 
@@ -77,11 +77,15 @@ export const DrawingFilters = ({
 						className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
 					>
 						<option value="">-- 리비전 --</option>
-						{availableRevisions.map((r: Revision) => (
-							<option key={r.version} value={r.version}>
-								{r.version} - {r.description}
-							</option>
-						))}
+						{availableRevisions.map((r: Revision) => {
+							const isLatest = isLatestRevision(r, availableRevisions);
+							return (
+								<option key={r.version} value={r.version}>
+									{r.version}
+									{isLatest ? " (최신)" : ""}
+								</option>
+							);
+						})}
 					</select>
 				</div>
 			</div>
