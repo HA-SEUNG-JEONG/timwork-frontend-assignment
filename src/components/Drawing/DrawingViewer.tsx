@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DrawingFilters } from "./DrawingFilters";
 import { DrawingContextHeader } from "./DrawingContextHeader";
 import { RevisionMetadataPanel } from "./RevisionMetadataPanel";
@@ -8,140 +8,219 @@ import type { Discipline, DrawingDiscipline, Revision } from "../../type";
 import { ImageCanvas } from "./ImageCanvas";
 
 export const DrawingViewer = () => {
-    const {
-        metadata,
-        selectedDrawing,
-        selectedDiscipline,
-        setSelectedDiscipline,
-        selectedRevision,
-        setSelectedRevision,
-        isSidebarVisible,
-        toggleSidebar,
-    } = useAppContext();
+	const {
+		metadata,
+		selectedDrawing,
+		selectedDiscipline,
+		setSelectedDiscipline,
+		selectedRevision,
+		setSelectedRevision,
+	} = useAppContext();
 
-    const handleDisciplineChange = (discipline: Discipline | null) => {
-        setSelectedDiscipline(discipline);
-        setSelectedRevision(null);
-    };
+	const [isCompareMode, setIsCompareMode] = useState(false);
+	const [revisionA, setRevisionA] = useState<Revision | null>(null);
+	const [revisionB, setRevisionB] = useState<Revision | null>(null);
 
-    const handleRevisionChange = (revision: Revision | null) => {
-        setSelectedRevision(revision);
-    };
+	const handleDisciplineChange = (discipline: Discipline | null) => {
+		setSelectedDiscipline(discipline);
+		setSelectedRevision(null);
 
-    const disciplineMap = useMemo(() => {
-        if (!metadata) return new Map<string, Discipline>();
-        return new Map(metadata.disciplines.map((d) => [d.name, d]));
-    }, [metadata]);
+		setIsCompareMode(false);
+		setRevisionA(null);
+		setRevisionB(null);
+	};
 
-    const availableDisciplines = useMemo(() => {
-        if (!selectedDrawing || !metadata) return [];
-        const drawingData = metadata.drawings[selectedDrawing.id];
-        if (!drawingData?.disciplines) return [];
-        return Object.keys(drawingData.disciplines)
-            .map((name) => disciplineMap.get(name))
-            .filter((d): d is Discipline => d !== undefined);
-    }, [selectedDrawing, metadata, disciplineMap]);
+	const handleRevisionChange = (revision: Revision | null) => {
+		setSelectedRevision(revision);
+	};
 
-    useEffect(() => {
-        if (!selectedDiscipline) return;
+	const handleToggleCompareMode = () => {
+		const newCompareMode = !isCompareMode;
+		setIsCompareMode(newCompareMode);
 
-        const isDisciplineAvailable = availableDisciplines.some(
-            (availableDiscipline) =>
-                availableDiscipline.name === selectedDiscipline.name
-        );
+		if (newCompareMode) {
+			if (availableRevisions.length >= 2) {
+				setRevisionA(availableRevisions[0]);
+				setRevisionB(availableRevisions[1]);
+			}
+		} else {
+			// 비교 모드 비활성화: 상태 초기화
+			setRevisionA(null);
+			setRevisionB(null);
+		}
+	};
 
-        if (!isDisciplineAvailable) {
-            setSelectedDiscipline(null);
-            setSelectedRevision(null);
-        }
-    }, [
-        selectedDrawing,
-        availableDisciplines,
-        selectedDiscipline,
-        setSelectedDiscipline,
-        setSelectedRevision,
-    ]);
+	const disciplineMap = !metadata
+		? new Map<string, Discipline>()
+		: new Map(metadata.disciplines.map((d) => [d.name, d]));
 
-    const availableRevisions = useMemo(() => {
-        if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
-        const drawingDiscipline =
-            metadata.drawings[selectedDrawing.id]?.disciplines?.[
-                selectedDiscipline.name
-            ];
-        if (!drawingDiscipline) return [];
+	const availableDisciplines = (() => {
+		if (!selectedDrawing || !metadata) return [];
+		const drawingData = metadata.drawings[selectedDrawing.id];
+		if (!drawingData?.disciplines) return [];
+		return Object.keys(drawingData.disciplines)
+			.map((name) => disciplineMap.get(name))
+			.filter((d): d is Discipline => d !== undefined);
+	})();
 
-        const revisions: Revision[] = [...(drawingDiscipline.revisions || [])];
+	useEffect(() => {
+		if (!selectedDiscipline) return;
 
-        if (drawingDiscipline.regions) {
-            for (const region of Object.values(drawingDiscipline.regions)) {
-                revisions.push(...region.revisions);
-            }
-        }
+		const isDisciplineAvailable = availableDisciplines.some(
+			(availableDiscipline) =>
+				availableDiscipline.name === selectedDiscipline.name,
+		);
 
-        return revisions;
-    }, [selectedDrawing, selectedDiscipline, metadata]);
+		if (!isDisciplineAvailable) {
+			setSelectedDiscipline(null);
+			setSelectedRevision(null);
+		}
+	}, [
+		selectedDrawing,
+		availableDisciplines,
+		selectedDiscipline,
+		setSelectedDiscipline,
+		setSelectedRevision,
+	]);
 
-    const imageUrl = useMemo(() => {
-        if (!selectedDrawing) return null;
+	const availableRevisions = (() => {
+		if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
+		const drawingDiscipline =
+			metadata.drawings[selectedDrawing.id]?.disciplines?.[
+				selectedDiscipline.name
+			];
+		if (!drawingDiscipline) return [];
 
-        let image = selectedDrawing.image;
-        if (selectedDiscipline) {
-            const disciplineData: DrawingDiscipline | undefined =
-                metadata?.drawings[selectedDrawing.id]?.disciplines?.[
-                    selectedDiscipline.name
-                ];
-            if (disciplineData?.image) {
-                image = disciplineData.image;
-            }
-        }
-        if (selectedRevision?.image) {
-            image = selectedRevision.image;
-        }
+		const revisions: Revision[] = [...(drawingDiscipline.revisions || [])];
 
-        return image ? `/data/drawings/${image}` : null;
-    }, [selectedDrawing, selectedDiscipline, selectedRevision, metadata]);
+		if (drawingDiscipline.regions) {
+			for (const region of Object.values(drawingDiscipline.regions)) {
+				revisions.push(...region.revisions);
+			}
+		}
 
-    return (
-        <main className="flex-1 flex flex-col p-4 bg-gray-100 h-screen">
-            <DrawingContextHeader
-                drawingName={selectedDrawing?.name || "도면을 선택하세요"}
-                disciplineName={selectedDiscipline?.name}
-                revisionVersion={selectedRevision?.version}
-            />
+		return revisions;
+	})();
 
-            <div className="mb-2 flex gap-2">
-                {!isSidebarVisible && (
-                    <button
-                        onClick={toggleSidebar}
-                        className="px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-700 transition-colors"
-                        title="사이드바 표시"
-                    >
-                        ▶ 사이드바 표시
-                    </button>
-                )}
-            </div>
+	const imageUrl = (() => {
+		if (!selectedDrawing) return null;
 
-            <>
-                <DrawingFilters
-                    availableDisciplines={availableDisciplines}
-                    availableRevisions={availableRevisions}
-                    onDisciplineChange={handleDisciplineChange}
-                    onRevisionChange={handleRevisionChange}
-                />
+		let image = selectedDrawing.image;
+		if (selectedDiscipline) {
+			const disciplineData: DrawingDiscipline | undefined =
+				metadata?.drawings[selectedDrawing.id]?.disciplines?.[
+					selectedDiscipline.name
+				];
+			if (disciplineData?.image) {
+				image = disciplineData.image;
+			}
+		}
+		if (selectedRevision?.image) {
+			image = selectedRevision.image;
+		}
 
-                {selectedRevision && (
-                    <div className="mb-4">
-                        <RevisionMetadataPanel revision={selectedRevision} />
-                    </div>
-                )}
-            </>
+		return image ? `/data/drawings/${image}` : null;
+	})();
 
-            <div className="flex-1 overflow-auto">
-                <ImageCanvas
-                    imageUrl={imageUrl}
-                    selectedDrawing={selectedDrawing}
-                />
-            </div>
-        </main>
-    );
+	const imageUrlA = revisionA?.image
+		? `/data/drawings/${revisionA.image}`
+		: null;
+	const imageUrlB = revisionB?.image
+		? `/data/drawings/${revisionB.image}`
+		: null;
+
+	return (
+		<main className="flex-1 flex flex-col p-4 bg-gray-100 h-screen">
+			<DrawingContextHeader
+				drawingName={selectedDrawing?.name || "도면을 선택하세요"}
+				disciplineName={selectedDiscipline?.name}
+				revisionVersion={isCompareMode ? undefined : selectedRevision?.version}
+			/>
+			{selectedDiscipline && availableRevisions.length >= 2 && (
+				<div className="mb-2">
+					<button
+						onClick={handleToggleCompareMode}
+						className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+							isCompareMode
+								? "bg-indigo-600 text-white hover:bg-indigo-700"
+								: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+						}`}
+					>
+						{isCompareMode ? "📊 비교 모드" : "단일 모드"}
+					</button>
+				</div>
+			)}
+			{!isCompareMode ? (
+				<div className="flex items-start gap-3 mb-2">
+					<DrawingFilters
+						availableDisciplines={availableDisciplines}
+						availableRevisions={availableRevisions}
+						onDisciplineChange={handleDisciplineChange}
+						onRevisionChange={handleRevisionChange}
+					/>
+
+					{selectedRevision && (
+						<RevisionMetadataPanel revision={selectedRevision} />
+					)}
+				</div>
+			) : (
+				<div className="flex gap-4 mb-2">
+					{/* 리비전 A 선택 */}
+					<div className="flex items-center gap-2">
+						<label className="text-sm font-medium text-gray-700">
+							리비전 A:
+						</label>
+						<select
+							value={revisionA?.version || ""}
+							onChange={(e) => {
+								const selected = availableRevisions.find(
+									(r) => r.version === e.target.value,
+								);
+								setRevisionA(selected || null);
+							}}
+							className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+						>
+							<option value="">선택하세요</option>
+							{availableRevisions.map((rev) => (
+								<option key={rev.version} value={rev.version}>
+									{rev.version}
+								</option>
+							))}
+						</select>
+					</div>
+					<div className="flex items-center gap-2">
+						<label className="text-sm font-medium text-gray-700">
+							리비전 B:
+						</label>
+						<select
+							value={revisionB?.version || ""}
+							onChange={(e) => {
+								const selected = availableRevisions.find(
+									(r) => r.version === e.target.value,
+								);
+								setRevisionB(selected || null);
+							}}
+							className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+						>
+							<option value="">선택하세요</option>
+							{availableRevisions.map((rev) => (
+								<option key={rev.version} value={rev.version}>
+									{rev.version}
+								</option>
+							))}
+						</select>
+					</div>
+				</div>
+			)}
+			<div className="flex-1 overflow-auto">
+				<ImageCanvas
+					imageUrl={imageUrl}
+					selectedDrawing={selectedDrawing}
+					isCompareMode={isCompareMode}
+					imageUrlA={imageUrlA}
+					imageUrlB={imageUrlB}
+				/>
+			</div>
+		</main>
+	);
 };

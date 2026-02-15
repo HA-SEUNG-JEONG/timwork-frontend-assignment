@@ -1,5 +1,3 @@
-// src/types/index.ts
-
 export interface Project {
 	name: string;
 	unit: string;
