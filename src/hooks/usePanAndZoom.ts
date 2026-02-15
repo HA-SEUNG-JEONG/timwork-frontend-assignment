@@ -8,8 +8,8 @@ interface Transform {
 
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 10;
-const ZOOM_STEP = 0.25;
-const WHEEL_ZOOM_FACTOR = 0.001;
+const ZOOM_RATIO = 1.25;
+const WHEEL_SENSITIVITY = 0.001;
 
 export function usePanAndZoom() {
 	const [transform, setTransform] = useState<Transform>({
@@ -39,10 +39,11 @@ export function usePanAndZoom() {
 			const mouseY = e.clientY - rect.top;
 
 			const { x, y, scale } = transformRef.current;
-			const delta = -e.deltaY * WHEEL_ZOOM_FACTOR;
+			const normalizedDelta = Math.max(-100, Math.min(100, e.deltaY));
+			const zoomDelta = -normalizedDelta * WHEEL_SENSITIVITY;
 			const newScale = Math.min(
 				MAX_SCALE,
-				Math.max(MIN_SCALE, scale * (1 + delta)),
+				Math.max(MIN_SCALE, scale * (1 + zoomDelta)),
 			);
 
 			const pointX = (mouseX - x) / scale;
@@ -91,24 +92,21 @@ export function usePanAndZoom() {
 		const container = containerRef.current;
 		if (!container) return;
 		const rect = container.getBoundingClientRect();
-		const cx = rect.width / 2;
-
-		const cy = rect.height / 2;
+		const centerX = rect.width / 2;
+		const centerY = rect.height / 2;
 
 		setTransform((prev) => {
-			const scaleFactor = direction === 1 ? 1 + ZOOM_STEP : 1 - ZOOM_STEP;
-
 			const newScale =
 				direction === 1
-					? Math.min(MAX_SCALE, prev.scale * scaleFactor)
-					: Math.max(MIN_SCALE, prev.scale * scaleFactor);
+					? Math.min(MAX_SCALE, prev.scale * ZOOM_RATIO)
+					: Math.max(MIN_SCALE, prev.scale / ZOOM_RATIO);
 
-			const pointX = (cx - prev.x) / prev.scale;
-			const pointY = (cy - prev.y) / prev.scale;
+			const pointX = (centerX - prev.x) / prev.scale;
+			const pointY = (centerY - prev.y) / prev.scale;
 
 			return {
-				x: cx - pointX * newScale,
-				y: cy - pointY * newScale,
+				x: centerX - pointX * newScale,
+				y: centerY - pointY * newScale,
 				scale: newScale,
 			};
 		});
