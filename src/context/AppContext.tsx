@@ -22,13 +22,6 @@ interface AppContextType {
 	// 사이드바 관련
 	isSidebarVisible: boolean;
 	toggleSidebar: () => void;
-	// 리비전 비교 모드
-	isCompareMode: boolean;
-	setIsCompareMode: (isCompare: boolean) => void;
-	compareRevisionA: Revision | null;
-	setCompareRevisionA: (revision: Revision | null) => void;
-	compareRevisionB: Revision | null;
-	setCompareRevisionB: (revision: Revision | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -45,15 +38,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 		null,
 	);
 	const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
-
-	// 리비전 비교 모드
-	const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
-	const [compareRevisionA, setCompareRevisionA] = useState<Revision | null>(
-		null,
-	);
-	const [compareRevisionB, setCompareRevisionB] = useState<Revision | null>(
-		null,
-	);
 
 	// 사이드바 토글
 	const toggleSidebar = () => {
@@ -75,12 +59,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 				setSelectedRevision,
 				isSidebarVisible,
 				toggleSidebar,
-				isCompareMode,
-				setIsCompareMode,
-				compareRevisionA,
-				setCompareRevisionA,
-				compareRevisionB,
-				setCompareRevisionB,
 			}}
 		>
 			{children}
