@@ -29,7 +29,7 @@ export const LayerItem = React.memo(
 				{/* 헤더: 공종명 + 컨트롤 버튼 */}
 				<div className="flex items-center justify-between">
 					<div
-						className={`px-2 py-1 rounded text-xs font-medium ${colors.bg} ${colors.text} ${colors.border} border`}
+						className={`px-2 py-1 rounded text-xs font-medium ${colors.bg} ${colors.text}`}
 					>
 						{layer.discipline.name}
 					</div>

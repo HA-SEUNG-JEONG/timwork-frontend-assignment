@@ -4,7 +4,6 @@ import { OpacitySlider } from "../OpacitySlider";
 import { usePanAndZoom } from "../../hooks/usePanAndZoom";
 import type { NormalizedDrawing, OverlayLayer, Metadata } from "../../type";
 import { getLayerImageUrl } from "../../utils/layerUtils";
-import { getDisciplineColor } from "../../utils/disciplineColors";
 
 interface ImageCanvasProps {
 	imageUrl?: string | null;
@@ -100,21 +99,6 @@ export const ImageCanvas = ({
 									</div>
 								);
 							})}
-
-							{/* 레이어 라벨 */}
-							<div className="absolute top-4 left-4 flex flex-col gap-1.5 z-1000">
-								{visibleLayers.map((layer) => {
-									const colors = getDisciplineColor(layer.discipline.name);
-									return (
-										<div
-											key={`label-${layer.id}`}
-											className={`px-2 py-1 rounded text-xs font-semibold shadow-md ${colors.bg} ${colors.text} ${colors.border} border`}
-										>
-											{layer.discipline.name}
-										</div>
-									);
-								})}
-							</div>
 						</div>
 						<ZoomControls
 							scale={transform.scale}

@@ -13,13 +13,13 @@ export const DrawingContextHeader: React.FC<DrawingContextHeaderProps> = ({
 	revisionVersion,
 }) => {
 	return (
-		<div className="mb-2 p-3 bg-white rounded-lg shadow-sm border border-gray-200">
-			<h2 className="text-lg font-bold mb-1.5">{drawingName}</h2>
+		<div className="mb-4 p-4 bg-white rounded-lg">
+			<h2 className="text-xl font-bold mb-2">{drawingName}</h2>
 
 			<div className="flex gap-2 items-center">
 				{disciplineName && (
 					<span
-						className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${
+						className={`px-3 py-1 text-sm font-medium rounded-full ${
 							getDisciplineColor(disciplineName).bg
 						} ${getDisciplineColor(disciplineName).text}`}
 					>
@@ -27,7 +27,7 @@ export const DrawingContextHeader: React.FC<DrawingContextHeaderProps> = ({
 					</span>
 				)}
 				{revisionVersion && (
-					<span className="text-xs text-gray-600">
+					<span className="text-sm text-gray-600">
 						리비전: {revisionVersion}
 					</span>
 				)}
