@@ -1,25 +1,10 @@
-import type { Revision, DrawingDiscipline } from "../type";
-
-export function collectRevisions(discipline: DrawingDiscipline) {
-	const revisions: Revision[] = [...(discipline.revisions || [])];
-
-	if (discipline.regions) {
-		for (const region of Object.values(discipline.regions)) {
-			revisions.push(...region.revisions);
-		}
-	}
-
-	return revisions;
-}
+import type { Revision } from "../type";
 
 export function getLatestRevision(revisions: Revision[]): Revision | null {
 	if (revisions.length === 0) return null;
-
-	return revisions.reduce((latest, current) => {
-		const latestDate = new Date(latest.date);
-		const currentDate = new Date(current.date);
-		return currentDate > latestDate ? current : latest;
-	});
+	return revisions.reduce((latest, current) =>
+		new Date(current.date) > new Date(latest.date) ? current : latest,
+	);
 }
 
 export function isLatestRevision(

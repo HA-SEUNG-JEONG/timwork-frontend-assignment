@@ -173,21 +173,6 @@ export const ImageCanvas = ({
 								</div>
 							)}
 
-							{/* 레이어 라벨 */}
-							<div className="absolute top-4 left-4 flex gap-2 z-10">
-								{bottomLayerUrl && (
-									<div className="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded shadow-md">
-										{bottomLabel} (하단)
-									</div>
-								)}
-								{topLayerUrl && (
-									<div className="px-3 py-1 bg-green-600 text-white text-sm font-semibold rounded shadow-md">
-										{topLabel} (상단)
-									</div>
-								)}
-							</div>
-
-							{/* 투명도 조절 슬라이더 */}
 							{topLayerUrl && (
 								<OpacitySlider
 									opacity={overlayOpacity}
