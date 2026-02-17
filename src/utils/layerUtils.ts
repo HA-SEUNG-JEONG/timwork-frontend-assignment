@@ -6,17 +6,13 @@ import type {
 	Metadata,
 } from "../type";
 
-export function generateLayerId(): string {
-	return `layer-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
-
 export function createOverlayLayer(
 	discipline: Discipline,
 	zIndex: number,
 	latestRevision: Revision | null = null,
 ): OverlayLayer {
 	return {
-		id: generateLayerId(),
+		id: `layer-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
 		discipline,
 		revision: latestRevision,
 		opacity: 0.7,

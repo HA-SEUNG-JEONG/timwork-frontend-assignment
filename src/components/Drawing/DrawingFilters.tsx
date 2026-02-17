@@ -1,7 +1,6 @@
 import React from "react";
 import type { Discipline, Revision } from "../../type";
 import { isLatestRevision } from "../../utils/revisionUtils";
-import { findDisciplineByName } from "../../utils/disciplineUtils";
 import { useAppContext } from "../../context/AppContext";
 
 interface DrawingFiltersProps {
@@ -23,7 +22,7 @@ export const DrawingFilters = ({
 	const handleDisciplineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const disciplineName = e.target.value;
 		const discipline =
-			findDisciplineByName(availableDisciplines, disciplineName) || null;
+			availableDisciplines.find((d) => d.name === disciplineName) || null;
 		onDisciplineChange(discipline);
 	};
 
