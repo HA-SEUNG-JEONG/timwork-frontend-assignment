@@ -24,7 +24,6 @@ export const LayerItem = ({
 
 	return (
 		<div className="flex flex-col gap-2 p-3 bg-white border border-gray-200 rounded-md">
-			{/* 헤더: 공종명 + 컨트롤 버튼 */}
 			<div className="flex items-center justify-between">
 				<div
 					className={`px-2 py-1 rounded text-xs font-medium ${colors.bg} ${colors.text}`}
@@ -42,7 +41,6 @@ export const LayerItem = ({
 					>
 						{layer.visible ? "👁" : "👁‍🗨"}
 					</button>
-					{/* 삭제 버튼 */}
 					<button
 						type="button"
 						onClick={() => onRemove(layer.id)}
@@ -53,8 +51,6 @@ export const LayerItem = ({
 					</button>
 				</div>
 			</div>
-
-			{/* 투명도 슬라이더 */}
 			<div className="flex flex-col gap-1">
 				<div className="flex items-center justify-between">
 					<span className="text-xs text-gray-600">투명도</span>
@@ -62,6 +58,7 @@ export const LayerItem = ({
 				</div>
 				<input
 					type="range"
+					aria-label="투명도 조절"
 					min="0"
 					max="1"
 					step="0.01"
