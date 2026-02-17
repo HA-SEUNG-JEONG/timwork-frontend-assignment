@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Revision } from "../../type";
 import { formatRevisionDate } from "../../utils/dateFormatter";
 
 interface RevisionMetadataPanelProps {
-	revision: Revision | null;
+	revision: Revision;
 }
 
-export const RevisionMetadataPanel: React.FC<RevisionMetadataPanelProps> = ({
+export const RevisionMetadataPanel = ({
 	revision,
-}) => {
+}: RevisionMetadataPanelProps) => {
 	const [isExpanded, setIsExpanded] = useState(false);
-
-	if (!revision) return null;
 
 	const formattedDate = formatRevisionDate(revision.date, "short");
 

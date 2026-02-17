@@ -22,6 +22,8 @@ interface AppContextType {
 	setSelectedRevision: (revision: Revision | null) => void;
 	isSidebarVisible: boolean;
 	toggleSidebar: () => void;
+	isCompareMode: boolean;
+	setIsCompareMode: (mode: boolean) => void;
 	isMultiDisciplineMode: boolean;
 	setIsMultiDisciplineMode: (mode: boolean) => void;
 	overlayLayers: OverlayLayer[];
@@ -42,6 +44,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 		null,
 	);
 	const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(true);
+	const [isCompareMode, setIsCompareMode] = useState<boolean>(false);
 	const [isMultiDisciplineMode, setIsMultiDisciplineMode] =
 		useState<boolean>(false);
 	const [overlayLayers, setOverlayLayers] = useState<OverlayLayer[]>([]);
@@ -65,6 +68,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 				setSelectedRevision,
 				isSidebarVisible,
 				toggleSidebar,
+				isCompareMode,
+				setIsCompareMode,
 				isMultiDisciplineMode,
 				setIsMultiDisciplineMode,
 				overlayLayers,
