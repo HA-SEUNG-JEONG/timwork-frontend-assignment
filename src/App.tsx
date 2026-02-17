@@ -1,6 +1,6 @@
-import { TreeView } from "./components/Navigation/TreeView";
-import { DrawingViewer } from "./components/Drawing/DrawingViewer";
-import { AppProvider, useAppContext } from "./context/AppContext";
+import { TreeView } from "@/components/Navigation/TreeView";
+import { DrawingViewer } from "@/components/Drawing/views/DrawingViewer";
+import { AppProvider, useAppContext } from "@/context/AppContext";
 
 function AppContent() {
 	const { isSidebarVisible, toggleSidebar } = useAppContext();

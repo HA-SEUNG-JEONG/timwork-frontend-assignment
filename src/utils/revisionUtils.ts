@@ -1,4 +1,4 @@
-import type { Revision } from "../type";
+import type { Revision } from "@/type";
 
 export function getLatestRevision(revisions: Revision[]): Revision | null {
 	if (revisions.length === 0) return null;

@@ -4,7 +4,7 @@ import type {
 	OverlayLayer,
 	NormalizedDrawing,
 	Metadata,
-} from "../type";
+} from "@/type";
 
 export function createOverlayLayer(
 	discipline: Discipline,

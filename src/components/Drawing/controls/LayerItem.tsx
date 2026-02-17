@@ -1,5 +1,5 @@
-import type { OverlayLayer } from "../../type";
-import { getDisciplineColor } from "../../utils/disciplineColors";
+import type { OverlayLayer } from "@/type";
+import { getDisciplineColor } from "@/utils/disciplineColors";
 
 interface LayerItemProps {
 	layer: OverlayLayer;

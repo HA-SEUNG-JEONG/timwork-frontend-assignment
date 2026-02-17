@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { ZoomControls } from "../ZoomControls";
-import { usePanAndZoom } from "../../hooks/usePanAndZoom";
-import { useAppContext } from "../../context/AppContext";
+import { ZoomControls } from "@/components/ui/ZoomControls";
+import { usePanAndZoom } from "@/hooks/usePanAndZoom";
+import { useAppContext } from "@/context/AppContext";
 
 interface ImageCanvasProps {
 	imageUrl?: string | null;

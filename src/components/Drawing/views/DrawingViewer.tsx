@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { DrawingFilters } from "./DrawingFilters";
-import { RevisionMetadataPanel } from "./RevisionMetadataPanel";
+import { DrawingFilters } from "../controls/DrawingFilters";
+import { RevisionMetadataPanel } from "../panels/RevisionMetadataPanel";
 import { CompareView } from "./CompareView";
 import { MultiDisciplineView } from "./MultiDisciplineView";
-import { ViewModeHeader } from "./ViewModeHeader";
+import { ViewModeHeader } from "../panels/ViewModeHeader";
 
-import { useAppContext } from "../../context/AppContext";
-import type { Discipline, Revision, DrawingDiscipline } from "../../type";
-import { ImageCanvas } from "./ImageCanvas";
+import { useAppContext } from "@/context/AppContext";
+import type { Discipline, Revision, DrawingDiscipline } from "@/type";
+import { ImageCanvas } from "../renderers/ImageCanvas";
 
 export const DrawingViewer = () => {
 	const {

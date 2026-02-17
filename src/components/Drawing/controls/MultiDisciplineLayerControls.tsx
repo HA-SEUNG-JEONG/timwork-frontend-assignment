@@ -1,6 +1,6 @@
 import React from "react";
-import type { Discipline, OverlayLayer } from "../../type";
-import { getDisciplineColor } from "../../utils/disciplineColors";
+import type { Discipline, OverlayLayer } from "@/type";
+import { getDisciplineColor } from "@/utils/disciplineColors";
 import { LayerItem } from "./LayerItem";
 
 interface MultiDisciplineLayerControlsProps {

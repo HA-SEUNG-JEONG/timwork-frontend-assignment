@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import type { Discipline, Revision } from "../../type";
-import { useAppContext } from "../../context/AppContext";
-import { getDisciplineColor } from "../../utils/disciplineColors";
+import type { Discipline, Revision } from "@/type";
+import { useAppContext } from "@/context/AppContext";
+import { getDisciplineColor } from "@/utils/disciplineColors";
 
 interface ViewModeHeaderProps {
 	availableRevisions: Revision[];

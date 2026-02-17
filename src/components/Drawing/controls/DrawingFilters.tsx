@@ -1,7 +1,7 @@
 import React from "react";
-import type { Discipline, Revision } from "../../type";
-import { isLatestRevision } from "../../utils/revisionUtils";
-import { useAppContext } from "../../context/AppContext";
+import type { Discipline, Revision } from "@/type";
+import { isLatestRevision } from "@/utils/revisionUtils";
+import { useAppContext } from "@/context/AppContext";
 
 interface DrawingFiltersProps {
 	availableDisciplines: Discipline[];

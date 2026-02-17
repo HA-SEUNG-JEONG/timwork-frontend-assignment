@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { Revision } from "../../type";
-import { formatRevisionDate } from "../../utils/dateFormatter";
+import type { Revision } from "@/type";
+import { formatRevisionDate } from "@/utils/dateFormatter";
 
 interface RevisionMetadataPanelProps {
 	revision: Revision;

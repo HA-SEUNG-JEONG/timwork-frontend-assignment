@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Metadata, NormalizedDrawing } from "../type";
-import { fetchMetadata } from "../parser";
-import { normalizeDrawings } from "../normalized";
+import type { Metadata, NormalizedDrawing } from "@/type";
+import { fetchMetadata } from "@/utils/parser";
+import { normalizeDrawings } from "@/utils/normalized";
 
 export function useDrawingData() {
 	const [metadata, setMetadata] = useState<Metadata | null>(null);

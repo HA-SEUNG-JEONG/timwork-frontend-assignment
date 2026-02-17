@@ -1,4 +1,4 @@
-import type { Metadata } from "./type";
+import type { Metadata } from "@/type";
 
 export async function fetchMetadata(): Promise<Metadata> {
 	const response = await fetch("/data/metadata.json");

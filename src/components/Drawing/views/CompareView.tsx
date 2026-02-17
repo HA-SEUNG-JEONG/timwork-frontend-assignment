@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Revision } from "../../type";
-import { useAppContext } from "../../context/AppContext";
-import { ViewModeHeader } from "./ViewModeHeader";
-import { ZoomControls } from "../ZoomControls";
-import { OpacitySlider } from "../OpacitySlider";
-import { usePanAndZoom } from "../../hooks/usePanAndZoom";
-import { ImageLayer } from "./ImageLayer";
+import type { Revision } from "@/type";
+import { useAppContext } from "@/context/AppContext";
+import { ViewModeHeader } from "../panels/ViewModeHeader";
+import { ZoomControls } from "@/components/ui/ZoomControls";
+import { OpacitySlider } from "@/components/ui/OpacitySlider";
+import { usePanAndZoom } from "@/hooks/usePanAndZoom";
+import { ImageLayer } from "../renderers/ImageLayer";
 
 interface RevisionSelectProps {
 	label: string;

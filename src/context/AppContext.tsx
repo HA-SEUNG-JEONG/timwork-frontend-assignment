@@ -1,13 +1,13 @@
 import React, { createContext, useState, useContext } from "react";
 
-import { useDrawingData } from "../hooks/useDrawingData";
+import { useDrawingData } from "@/hooks/useDrawingData";
 import type {
 	Discipline,
 	Metadata,
 	NormalizedDrawing,
 	Revision,
 	OverlayLayer,
-} from "../type";
+} from "@/type";
 
 interface AppContextType {
 	metadata: Metadata | null;

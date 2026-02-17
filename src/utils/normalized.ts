@@ -3,7 +3,7 @@ import type {
 	Metadata,
 	NormalizedDiscipline,
 	NormalizedDrawing,
-} from "./type";
+} from "@/type";
 
 export function normalizeDrawings(metadata: Metadata): NormalizedDrawing[] {
 	const drawings = Object.values(metadata.drawings);

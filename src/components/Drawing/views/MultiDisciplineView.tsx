@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo } from "react";
-import type { Discipline } from "../../type";
-import { useAppContext } from "../../context/AppContext";
-import { MultiDisciplineLayerControls } from "./MultiDisciplineLayerControls";
-import { ViewModeHeader } from "./ViewModeHeader";
-import { ZoomControls } from "../ZoomControls";
-import { usePanAndZoom } from "../../hooks/usePanAndZoom";
+import type { Discipline } from "@/type";
+import { useAppContext } from "@/context/AppContext";
+import { MultiDisciplineLayerControls } from "../controls/MultiDisciplineLayerControls";
+import { ViewModeHeader } from "../panels/ViewModeHeader";
+import { ZoomControls } from "@/components/ui/ZoomControls";
+import { usePanAndZoom } from "@/hooks/usePanAndZoom";
 import {
 	createOverlayLayer,
 	getNextZIndex,
 	getLayerImageUrl,
-} from "../../utils/layerUtils";
-import { getLatestRevision } from "../../utils/revisionUtils";
+	getLatestRevision,
+} from "@/utils/layerUtils";
 
 export const MultiDisciplineView = () => {
 	const { selectedDrawing, metadata, overlayLayers, setOverlayLayers } =
