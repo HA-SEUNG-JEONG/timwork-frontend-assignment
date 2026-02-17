@@ -1,3 +1,4 @@
+import React from "react";
 import { useAppContext } from "@/context/AppContext";
 
 import type { NormalizedDrawing } from "@/type";
