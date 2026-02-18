@@ -1,7 +1,21 @@
 import React from "react";
 import type { Discipline, Revision } from "@/type";
-import { isLatestRevision } from "@/utils/revisionUtils";
 import { useAppContext } from "@/context/AppContext";
+
+const getLatestRevision = (revisions: Revision[]): Revision | null => {
+  if (revisions.length === 0) return null;
+  return revisions.reduce((latest, current) =>
+    new Date(current.date) > new Date(latest.date) ? current : latest,
+  );
+};
+
+const isLatestRevision = (
+  revision: Revision,
+  revisions: Revision[],
+): boolean => {
+  const latest = getLatestRevision(revisions);
+  return latest?.version === revision.version;
+};
 
 interface DrawingFiltersProps {
   availableDisciplines: Discipline[];

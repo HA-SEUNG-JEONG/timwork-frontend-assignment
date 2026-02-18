@@ -1,9 +1,8 @@
-import React from "react";
 import { useAppContext } from "@/context/AppContext";
 
 import type { NormalizedDrawing } from "@/type";
 
-const TreeViewNode = React.memo(({ node }: { node: NormalizedDrawing }) => {
+const TreeViewNode = ({ node }: { node: NormalizedDrawing }) => {
   const { selectedDrawing, setSelectedDrawing } = useAppContext();
   const isSelected = selectedDrawing?.id === node.id;
 
@@ -36,7 +35,7 @@ const TreeViewNode = React.memo(({ node }: { node: NormalizedDrawing }) => {
       ) : null}
     </div>
   );
-});
+};
 
 export const TreeView = () => {
   const { normalizedData, loading, error, toggleSidebar } = useAppContext();

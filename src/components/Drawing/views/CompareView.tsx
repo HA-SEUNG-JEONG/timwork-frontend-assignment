@@ -81,7 +81,6 @@ export const CompareView = () => {
     return revisions;
   }, [selectedDrawing, selectedDiscipline, metadata]);
 
-  // 선택된 버전이 현재 availableRevisions에 없으면 기본값(첫/두 번째 리비전) 사용
   const versionA =
     selectedVersionA &&
     availableRevisions.some((r) => r.version === selectedVersionA)

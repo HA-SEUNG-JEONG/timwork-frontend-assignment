@@ -39,12 +39,10 @@ export function getLayerImageUrl(
 
   const base = `/data/drawings`;
 
-  // 리비전이 선택된 경우
   if (layer.revision?.image) {
     return `${base}/${layer.revision.image}`;
   }
 
-  // 기본 도면 이미지
   return `${base}/${drawing.image}`;
 }
 
