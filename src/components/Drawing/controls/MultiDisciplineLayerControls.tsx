@@ -7,9 +7,7 @@ interface MultiDisciplineLayerControlsProps {
   availableDisciplines: Discipline[];
   overlayLayers: OverlayLayer[];
   onAddLayer: (discipline: Discipline) => void;
-  onRemoveLayer: (layerId: string) => void;
   onOpacityChange: (layerId: string, opacity: number) => void;
-  onVisibilityToggle: (layerId: string) => void;
 }
 
 export const MultiDisciplineLayerControls = React.memo(
@@ -17,9 +15,7 @@ export const MultiDisciplineLayerControls = React.memo(
     availableDisciplines,
     overlayLayers,
     onAddLayer,
-    onRemoveLayer,
     onOpacityChange,
-    onVisibilityToggle,
   }: MultiDisciplineLayerControlsProps) => {
     const selectedDisciplineNames = overlayLayers.map(
       (layer) => layer.discipline.name,
@@ -31,13 +27,6 @@ export const MultiDisciplineLayerControls = React.memo(
     ) => {
       if (isSelected) {
         onAddLayer(discipline);
-      } else {
-        const layerToRemove = overlayLayers.find(
-          (layer) => layer.discipline.name === discipline.name,
-        );
-        if (layerToRemove) {
-          onRemoveLayer(layerToRemove.id);
-        }
       }
     };
 
@@ -102,8 +91,6 @@ export const MultiDisciplineLayerControls = React.memo(
                   key={layer.id}
                   layer={layer}
                   onOpacityChange={onOpacityChange}
-                  onVisibilityToggle={onVisibilityToggle}
-                  onRemove={onRemoveLayer}
                 />
               ))}
             </div>

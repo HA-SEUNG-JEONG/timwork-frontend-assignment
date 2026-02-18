@@ -54,29 +54,11 @@ export const MultiDisciplineView = () => {
     [selectedDrawing, overlayLayers, setOverlayLayers],
   );
 
-  const handleRemoveLayer = useCallback(
-    (layerId: string) => {
-      setOverlayLayers(overlayLayers.filter((layer) => layer.id !== layerId));
-    },
-    [overlayLayers, setOverlayLayers],
-  );
-
   const handleOpacityChange = useCallback(
     (layerId: string, opacity: number) => {
       setOverlayLayers(
         overlayLayers.map((layer) =>
           layer.id === layerId ? { ...layer, opacity } : layer,
-        ),
-      );
-    },
-    [overlayLayers, setOverlayLayers],
-  );
-
-  const handleVisibilityToggle = useCallback(
-    (layerId: string) => {
-      setOverlayLayers(
-        overlayLayers.map((layer) =>
-          layer.id === layerId ? { ...layer, visible: !layer.visible } : layer,
         ),
       );
     },
@@ -100,9 +82,7 @@ export const MultiDisciplineView = () => {
           availableDisciplines={availableDisciplines}
           overlayLayers={overlayLayers}
           onAddLayer={handleAddLayer}
-          onRemoveLayer={handleRemoveLayer}
           onOpacityChange={handleOpacityChange}
-          onVisibilityToggle={handleVisibilityToggle}
         />
         <div className="flex-1 overflow-auto">
           <div
