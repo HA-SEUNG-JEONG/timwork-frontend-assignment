@@ -57,7 +57,6 @@ export interface Drawing {
   disciplines?: {
     [key: string]: DrawingDiscipline;
   };
-  children?: Drawing[];
 }
 
 export interface Metadata {

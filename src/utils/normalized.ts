@@ -5,30 +5,33 @@ import type {
   NormalizedDrawing,
 } from "@/type";
 
+interface DrawingWithChildren extends Drawing {
+  children: DrawingWithChildren[];
+}
+
 export function normalizeDrawings(metadata: Metadata): NormalizedDrawing[] {
   const drawings = Object.values(metadata.drawings);
-  const drawingMap = new Map<string, Drawing>(
+  const drawingMap = new Map<string, DrawingWithChildren>(
     drawings.map((d) => [d.id, { ...d, children: [] }]),
   );
 
-  const rootDrawings: Drawing[] = [];
+  const rootDrawings: DrawingWithChildren[] = [];
 
   for (const drawing of drawings) {
     if (drawing.parent) {
       const parent = drawingMap.get(drawing.parent);
       if (parent) {
-        parent.children?.push(drawingMap.get(drawing.id)!);
+        parent.children.push(drawingMap.get(drawing.id)!);
       }
     } else {
       rootDrawings.push(drawingMap.get(drawing.id)!);
     }
   }
 
-  const convertToNormalized = (drawing: Drawing): NormalizedDrawing => {
+  const convertToNormalized = (drawing: DrawingWithChildren): NormalizedDrawing => {
     return {
       ...drawing,
-      children:
-        drawing.children?.map((child) => convertToNormalized(child)) || [],
+      children: drawing.children.map((child) => convertToNormalized(child)),
       disciplines: Object.entries(drawing.disciplines ?? {}).reduce(
         (acc, [disciplineName, disciplineData]) => {
           acc[disciplineName] = {
