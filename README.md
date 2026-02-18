@@ -2,6 +2,10 @@
 
 건설 도면 뷰어 (Construction Drawing Viewer)
 
+# 깃허브 저장소 링크
+
+https://github.com/HA-SEUNG-JEONG/timwork-frontend-assignment
+
 ## 실행 방법
 
 ```bash
