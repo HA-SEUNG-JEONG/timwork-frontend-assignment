@@ -3,7 +3,6 @@ import type {
   Revision,
   OverlayLayer,
   NormalizedDrawing,
-  Metadata,
 } from "@/type";
 
 export function createOverlayLayer(
@@ -30,10 +29,8 @@ export function getNextZIndex(layers: OverlayLayer[]): number {
 export function getLayerImageUrl(
   layer: OverlayLayer,
   drawing: NormalizedDrawing,
-  metadata: Metadata,
 ): string | null {
-  const disciplineData =
-    metadata.drawings[drawing.id]?.disciplines?.[layer.discipline.name];
+  const disciplineData = drawing.disciplines[layer.discipline.name];
 
   if (!disciplineData) return null;
 
@@ -49,14 +46,12 @@ export function getLayerImageUrl(
 export function getLatestRevision(
   drawing: NormalizedDrawing,
   discipline: Discipline,
-  metadata: Metadata,
 ): Revision | null {
-  const disciplineData =
-    metadata.drawings[drawing.id]?.disciplines?.[discipline.name];
+  const disciplineData = drawing.disciplines[discipline.name];
 
   if (!disciplineData) return null;
 
-  const revisions: Revision[] = [...(disciplineData.revisions || [])];
+  const revisions: Revision[] = [...disciplineData.revisions];
 
   if (disciplineData.regions) {
     for (const region of Object.values(disciplineData.regions)) {

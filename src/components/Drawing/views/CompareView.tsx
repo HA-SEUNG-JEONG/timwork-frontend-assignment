@@ -40,7 +40,7 @@ const RevisionSelect = ({
 );
 
 export const CompareView = () => {
-  const { selectedDrawing, selectedDiscipline, metadata } = useAppContext();
+  const { selectedDrawing, selectedDiscipline } = useAppContext();
 
   const [selectedVersionA, setSelectedVersionA] = useState<string | null>(null);
   const [selectedVersionB, setSelectedVersionB] = useState<string | null>(null);
@@ -61,16 +61,14 @@ export const CompareView = () => {
   }, [selectedDrawing, resetTransform]);
 
   const availableRevisions = useMemo(() => {
-    if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
+    if (!selectedDrawing || !selectedDiscipline) return [];
 
-    const selectedDrawingById = metadata.drawings[selectedDrawing.id];
-    const selectedDisciplines = selectedDrawingById.disciplines;
     const drawingDisciplineName =
-      selectedDisciplines?.[selectedDiscipline.name];
+      selectedDrawing.disciplines[selectedDiscipline.name];
 
     if (!drawingDisciplineName) return [];
 
-    const revisions: Revision[] = [...(drawingDisciplineName.revisions || [])];
+    const revisions: Revision[] = [...drawingDisciplineName.revisions];
 
     if (drawingDisciplineName.regions) {
       for (const region of Object.values(drawingDisciplineName.regions)) {
@@ -79,7 +77,7 @@ export const CompareView = () => {
     }
 
     return revisions;
-  }, [selectedDrawing, selectedDiscipline, metadata]);
+  }, [selectedDrawing, selectedDiscipline]);
 
   const versionA =
     selectedVersionA &&

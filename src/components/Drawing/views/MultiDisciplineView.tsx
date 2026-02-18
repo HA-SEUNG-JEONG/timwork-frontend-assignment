@@ -32,24 +32,18 @@ export const MultiDisciplineView = () => {
 
   const availableDisciplines = useMemo(() => {
     if (!selectedDrawing || !metadata) return [];
-    const drawingData = metadata.drawings[selectedDrawing.id];
-    if (!drawingData?.disciplines) return [];
 
     const disciplineMap = new Map(metadata.disciplines.map((d) => [d.name, d]));
-    return Object.keys(drawingData.disciplines)
+    return Object.keys(selectedDrawing.disciplines)
       .map((name) => disciplineMap.get(name))
       .filter((d) => d !== undefined);
   }, [selectedDrawing, metadata]);
 
   const handleAddLayer = useCallback(
     (discipline: Discipline) => {
-      if (!selectedDrawing || !metadata) return;
+      if (!selectedDrawing) return;
 
-      const latestRevision = getLatestRevision(
-        selectedDrawing,
-        discipline,
-        metadata,
-      );
+      const latestRevision = getLatestRevision(selectedDrawing, discipline);
       const newLayer = createOverlayLayer(
         discipline,
         getNextZIndex(overlayLayers),
@@ -57,7 +51,7 @@ export const MultiDisciplineView = () => {
       );
       setOverlayLayers([...overlayLayers, newLayer]);
     },
-    [selectedDrawing, metadata, overlayLayers, setOverlayLayers],
+    [selectedDrawing, overlayLayers, setOverlayLayers],
   );
 
   const handleRemoveLayer = useCallback(
@@ -118,14 +112,13 @@ export const MultiDisciplineView = () => {
               isPanning ? "cursor-grabbing" : "cursor-grab"
             }`}
           >
-            {hasLayers && selectedDrawing && metadata ? (
+            {hasLayers && selectedDrawing ? (
               <>
                 <div className="relative w-full h-full">
                   {visibleLayers.map((layer) => {
                     const layerImageUrl = getLayerImageUrl(
                       layer,
                       selectedDrawing,
-                      metadata,
                     );
 
                     return (

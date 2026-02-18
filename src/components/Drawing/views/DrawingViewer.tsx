@@ -6,7 +6,7 @@ import { MultiDisciplineView } from "./MultiDisciplineView";
 import { ViewModeHeader } from "../panels/ViewModeHeader";
 
 import { useAppContext } from "@/context/AppContext";
-import type { Discipline, Revision, DrawingDiscipline } from "@/type";
+import type { Discipline, Revision } from "@/type";
 import { ImageCanvas } from "../renderers/ImageCanvas";
 
 export const DrawingViewer = () => {
@@ -30,27 +30,23 @@ export const DrawingViewer = () => {
   );
 
   const availableDisciplines = useMemo(() => {
-    if (!selectedDrawing || !metadata) return [];
-    const drawingData = metadata.drawings[selectedDrawing.id];
-    if (!drawingData?.disciplines) return [];
+    if (!selectedDrawing) return [];
 
-    const disciplineNames = Object.keys(drawingData.disciplines).map((name) =>
-      disciplineMap.get(name),
+    const disciplineNames = Object.keys(selectedDrawing.disciplines).map(
+      (name) => disciplineMap.get(name),
     );
     return disciplineNames.filter((d) => d !== undefined);
-  }, [selectedDrawing, metadata, disciplineMap]);
+  }, [selectedDrawing, disciplineMap]);
 
   const availableRevisions = useMemo(() => {
-    if (!selectedDrawing || !selectedDiscipline || !metadata) return [];
+    if (!selectedDrawing || !selectedDiscipline) return [];
 
-    const selectedDrawinById = metadata.drawings[selectedDrawing.id];
-    const selectedDisciplines = selectedDrawinById.disciplines;
     const drawingDisciplineName =
-      selectedDisciplines?.[selectedDiscipline.name];
+      selectedDrawing.disciplines[selectedDiscipline.name];
 
     if (!drawingDisciplineName) return [];
 
-    const revisions: Revision[] = [...(drawingDisciplineName.revisions || [])];
+    const revisions: Revision[] = [...drawingDisciplineName.revisions];
 
     if (drawingDisciplineName.regions) {
       for (const region of Object.values(drawingDisciplineName.regions)) {
@@ -59,7 +55,7 @@ export const DrawingViewer = () => {
     }
 
     return revisions;
-  }, [selectedDrawing, selectedDiscipline, metadata]);
+  }, [selectedDrawing, selectedDiscipline]);
 
   const baseImageUrl = useMemo(() => {
     if (!selectedDrawing) return null;
@@ -67,10 +63,8 @@ export const DrawingViewer = () => {
     let image = selectedDrawing.image;
 
     if (selectedDiscipline) {
-      const disciplineData: DrawingDiscipline | undefined =
-        metadata?.drawings[selectedDrawing.id]?.disciplines?.[
-          selectedDiscipline.name
-        ];
+      const disciplineData =
+        selectedDrawing.disciplines[selectedDiscipline.name];
       if (disciplineData?.image) {
         image = disciplineData.image;
       }
@@ -81,7 +75,7 @@ export const DrawingViewer = () => {
     }
 
     return image ? `/data/drawings/${image}` : null;
-  }, [selectedDrawing, selectedDiscipline, selectedRevision, metadata]);
+  }, [selectedDrawing, selectedDiscipline, selectedRevision]);
 
   const handleDisciplineChange = useCallback(
     (discipline: Discipline | null) => {
